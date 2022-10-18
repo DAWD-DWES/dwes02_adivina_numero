@@ -21,7 +21,6 @@ h1 {
     flex: none;
 }
 
-
 .capaform {
     display: flex;
     flex: 1;
@@ -63,7 +62,6 @@ form {
     height: 30px ;
     background: orange
 }
-select {font-size: 20px}
 
 .form-section {
     margin: 20px;
