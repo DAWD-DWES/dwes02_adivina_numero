@@ -7,10 +7,13 @@ define('UPPER_BOUND', 20);
 if (empty($_POST) || isset($_POST['newgamebutton'])) { // Si se arranca el juego o se solicita una nueva partida
     $numTries = 0;
     $numHidden = mt_rand(LOWER_BOUND, UPPER_BOUND); // Genero un valor aleatorio
+    $numeros = []; // Array de números jugados
 } else { // Si estoy en mitad del juego leo los valores del formulario
     $numHidden = filter_input(INPUT_POST, 'num_hidden', FILTER_SANITIZE_NUMBER_INT);
     $numTries = filter_input(INPUT_POST, 'num_tries', FILTER_SANITIZE_NUMBER_INT);
     $guess = filter_input(INPUT_POST, 'guess', FILTER_SANITIZE_NUMBER_INT);
+    $numeros = filter_input(INPUT_POST, 'numeros', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+    $numeros[] = $guess;
     ++$numTries;
     $end = $numTries >= MAX_TRIES || $guess === $numHidden; // Establezco si se ha acabado la partida o no
 }
