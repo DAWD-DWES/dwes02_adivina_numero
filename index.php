@@ -47,7 +47,6 @@ if (empty($_POST) || isset($_POST['newgamebutton'])) { // Si se arranca el juego
                                 <input class="submit" type="submit" 
                                        value="Guess" name="guessbutton" /> 
                             </div>
-
                         <?php else: ?>
                             <div class="submit-section">
                                 <!-- Si no se ha acabado el juego añado un botón para enviar apuesta, si se ha acabado añado un botón para iniciar una nueva partida -->
