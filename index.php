@@ -34,28 +34,37 @@ if (empty($_POST) || isset($_POST['newgamebutton'])) { // Si se arranca el juego
                     <input type="hidden" name="num_tries" value="<?= $numTries ?>" /> <!-- Incluyo el número de intentos en el formulario para que no se pierda -->
                     <div class="form-section">
                         <div class="input-section">
-                            <label for="guess"><?= 'Enter a number (' . constant('LOWER_BOUND') . '-' . constant('UPPER_BOUND') . '):' ?></label> 
+                            <label for="guess"><?= 'Enter a number (' . LOWER_BOUND . '-' . UPPER_BOUND . '):' ?></label> 
                             <input id="guess" type="number"  required name="guess" min="<?= LOWER_BOUND ?>" 
                                    max="<?= UPPER_BOUND ?>" value="<?= ($guess) ?? ''; ?>" <?= !empty($end) ? 'readonly' : '' ?> />
                         </div>
-                        <div class="submit-section">
-                            <!-- Si no se ha acabado el juego añado un botón para enviar apuesta, si se ha acabado añado un botón para iniciar una nueva partida -->
-                            <input class="submit" type="submit" 
-                                   value="<?= empty($end) ? 'Guess' : 'New Game' ?>" name="<?= empty($end) ? 'guessbutton' : 'newgamebutton'; ?>" /> 
-                        </div>
+                        <?php if (!isset($end) || (isset($end) && !$end)): ?> <!-- Si no se ha acabado la partida incluyo la pista para el jugador -->
+                            <div class="submit-section">
+                                <!-- Si no se ha acabado el juego añado un botón para enviar apuesta, si se ha acabado añado un botón para iniciar una nueva partida -->
+                                <input class="submit" type="submit" 
+                                       value="Guess" name="guessbutton" /> 
+                            </div>
+
+                        <?php else: ?>
+                            <div class="submit-section">
+                                <!-- Si no se ha acabado el juego añado un botón para enviar apuesta, si se ha acabado añado un botón para iniciar una nueva partida -->
+                                <input class="submit" type="submit" 
+                                       value="New Game" name="newgamebutton" /> 
+                            </div>
+                        <?php endif ?>
                     </div>
-                    <?php if (isset($end) && !$end): ?> <!-- Si no se ha acabado la partida incluyo la pista para el jugador -->
+                    <?php if (isset($end) && !$end): ?>
                         <p class="info-section">Tries left: <?= MAX_TRIES - $numTries ?></p>
-                        <?php if (isset($guess)): ?>
-                            <p class="info-section"><?= ($guess <=> $numHidden) > 0 ? 'Try with a lower number' : 'Try with a higher number' ?></p>
-                        <?php endif ?> 
-                    <?php elseif (isset($end) && $end): ?>
+                        <p class="info-section"><?= ($guess <=> $numHidden) > 0 ? 'Try with a lower number' : 'Try with a higher number' ?></p>
+                    <?php endif ?>
+                    <?php if (isset($end) && $end): ?>
                         <p class="info-section"><?= ($guess === $numHidden) ? "Well done!!! Got it in {$numTries} tries" : 'You lost!!' ?></p>
                     <?php endif ?>
-                </form> 
             </div>
-        </div>  
+        </form> 
     </div>
+</div>  
+</div>
 </div>
 </body>
 </html>
