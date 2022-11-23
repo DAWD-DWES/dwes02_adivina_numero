@@ -1,9 +1,5 @@
 body {
-    height:100vh;
-    display: flex;
-    flex-flow: column nowrap;
     box-sizing: border-box;
-    padding: 10px;
 }
 
 .page {
@@ -17,27 +13,26 @@ body {
     flex: 1;
     margin-left: 20px;
     margin-right: 20px;
-    font-size: 25px;
+    font-size: 1em;
     padding: 20px;
     min-width: 600px;
     flex-flow: column nowrap;
     border: 5px solid orange
 }
 
-.input-section {
+.input-seccion {
     display:flex;
     justify-content: space-between;
     flex: 1;
-    flex-flow: row nowrap;
     margin: 30px;
 }
 
 input[type="number"]{
-    font-size: 20px;
+    font-size: 1em;
     flex: 0 1 auto;
 }
 
-.submit-section {
+.submit-seccion {
     display:flex;
     flex: 1;
     justify-content: center;
@@ -48,7 +43,7 @@ input[type="number"]{
     background: orange
 }
 
-.form-section {
+.form-seccion {
     margin: 20px;
     display: flex;
     flex-flow: column nowrap;
@@ -59,10 +54,12 @@ label {
     flex: 1 0 100px;
     max-width: 300px;
     margin-bottom: 5px;
+    font-size: 1.5em;
 }
 
-.info-section {
+.info-seccion {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    font-size: 1.5em;
 }

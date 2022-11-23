@@ -1,21 +1,21 @@
 <?php
 // Definición de constantes o parámetros de funcionamiento del juego
-define('MAX_TRIES', 5);
-define('LOWER_BOUND', 1);
-define('UPPER_BOUND', 20);
+define('MAX_INTENTOS', 5);
+define('LIM_INF', 1);
+define('LIM_SUP', 20);
 
-if (empty($_POST) || isset($_POST['newgamebutton'])) { // Si se arranca el juego o se solicita una nueva partida
-    $numTries = 0;
-    $numHidden = mt_rand(LOWER_BOUND, UPPER_BOUND); // Genero un valor aleatorio
-    $numbers = []; // Array de números jugados
+if (empty($_POST) || isset($_POST['nuevo_juego'])) { // Si se arranca el juego o se solicita una nueva partida
+    $numIntentos = 0;
+    $numOculto = mt_rand(LIM_INF, LIM_SUP); // Genero un valor aleatorio
+    $numeros = []; // Array de números jugados
 } else { // Si estoy en mitad del juego leo los valores del formulario
-    $numHidden = filter_input(INPUT_POST, 'num_hidden', FILTER_SANITIZE_NUMBER_INT);
-    $numTries = filter_input(INPUT_POST, 'num_tries', FILTER_SANITIZE_NUMBER_INT);
-    $guess = filter_input(INPUT_POST, 'guess', FILTER_SANITIZE_NUMBER_INT);
-    $numbers = filter_input(INPUT_POST, 'numbers', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
-    $numbers[] = $guess;
-    ++$numTries;
-    $end = $numTries >= MAX_TRIES || $guess === $numHidden; // Establezco si se ha acabado la partida o no
+    $numOculto = filter_input(INPUT_POST, 'num_oculto', FILTER_SANITIZE_NUMBER_INT);
+    $numIntentos = filter_input(INPUT_POST, 'num_intentos', FILTER_SANITIZE_NUMBER_INT);
+    $apuesta = filter_input(INPUT_POST, 'apuesta', FILTER_SANITIZE_NUMBER_INT);
+    $numeros = filter_input(INPUT_POST, 'numeros', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+    $numeros[] = $apuesta;
+    ++$numIntentos;
+    $fin = $numIntentos >= MAX_INTENTOS || $apuesta === $numOculto; // Establezco si se ha acabado la partida o no
 }
 ?>
 
@@ -29,45 +29,42 @@ if (empty($_POST) || isset($_POST['newgamebutton'])) { // Si se arranca el juego
     </head>
     <body>
         <div class="page">
-            <h1>Guess Hidden Number!</h1>
+            <h1>¡Adivina el número oculto!</h1>
             <div class="capaform">
-                <form class="form" name="form_guessnumber" 
+                <form class="form" name="form_apuestanumero" 
                       action="index.php" method="POST">
-                    <input type="hidden" name="num_hidden" value="<?= $numHidden ?>" /> <!-- Incluyo el número secreto en el formulario para que no se pierda -->
-                    <input type="hidden" name="num_tries" value="<?= $numTries ?>" /> <!-- Incluyo el número de intentos en el formulario para que no se pierda -->
-                    <?php foreach ($numbers as $number): ?>
-                        <input type="hidden" name="numbers[]" value="<?= $number ?>" />
-                    <?php endforeach ?>
-                    <div class="form-section">
-                        <div class="input-section">
-                            <label for="guess"><?= 'Enter a number (' . LOWER_BOUND . '-' . UPPER_BOUND . '):' ?></label> 
-                            <input id="guess" type="number"  required name="guess" min="<?= LOWER_BOUND ?>" 
-                                   max="<?= UPPER_BOUND ?>" value="<?= ($guess) ?? ''; ?>" <?= !empty($end) ? 'readonly' : '' ?> />
-                        </div>
-                        <?php if (!isset($end) || (isset($end) && !$end)): ?> <!-- Si no se ha acabado la partida incluyo la pista para el jugador -->
-                            <div class="submit-section">
-                                <!-- Si no se ha acabado el juego añado un botón para enviar apuesta, si se ha acabado añado un botón para iniciar una nueva partida -->
-                                <input class="submit" type="submit" 
-                                       value="Guess" name="guessbutton" /> 
-                            </div>
-                        <?php else: ?>
-                            <div class="submit-section">
-                                <!-- Si no se ha acabado el juego añado un botón para enviar apuesta, si se ha acabado añado un botón para iniciar una nueva partida -->
-                                <input class="submit" type="submit" 
-                                       value="New Game" name="newgamebutton" /> 
-                            </div>
-                        <?php endif ?>
+                    <input type="hidden" name="num_oculto" value="<?= $numOculto ?>" /> <!-- Incluyo el número secreto en el formulario para que no se pierda -->
+                    <input type="hidden" name="num_intentos" value="<?= $numIntentos ?>" /> <!-- Incluyo el número de intentos en el formulario para que no se pierda -->
+                    <?php foreach ($numeros as $numero): ?> <!-- Incluyo los valores de las apuestas ya introducidas -->
+                        <input type="hidden" name="numeros[]" value="<?= $numero ?>" />
+                    <?php endforeach ?>                 
+                    <div class="input-seccion">
+                        <label for="apuesta"><?= 'Enter a numero (' . LIM_INF . '-' . LIM_SUP . '):' ?></label> 
+                        <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" 
+                               max="<?= LIM_SUP ?>" value="<?= ($apuesta) ?? ''; ?>" <?= !empty($fin) ? 'readonly' : '' ?> />
                     </div>
-                    <?php if (isset($end) && !$end): ?>
-                        <div class="info-section">
-                            <p>Tries left: <?= MAX_TRIES - $numTries ?></p>
-                            <p><?= ($guess <=> $numHidden) > 0 ? 'Try with a lower number' : 'Try with a higher number' ?></p>
-                            <p>You already played the following numbers: <?= implode(",", $numbers) ?></p>
+                    <?php if (isset($fin) && $fin): ?> <!-- Si no se ha acabado la partida incluyo la pista para el jugador -->
+                        <div class="submit-seccion">
+                            <!-- Si se ha acabado el juego añado un botón para iniciar una nueva partida y un mensaje de fin de juego -->
+                            <input class="submit" type="submit" 
+                                   value="Nuevo Juego" name="nuevo_juego" /> 
                         </div>
-                    <?php endif ?>
-                    <?php if (isset($end) && $end): ?>
-                        <p class="info-section"><?= ($guess === $numHidden) ? "Well done!!! Got it in {$numTries} tries" : 'You lost!!' ?></p>
-                    <?php endif ?>
+                        <p class="info-seccion"><?= ($apuesta === $numOculto) ? "Enhorabuena!!! Lo has acertado en {$numIntentos} " . (($numIntentos !== 1) ? "intentos" : "intento") : 'Lo sentimos!!' ?></p> 
+                    <?php else: ?>
+                        <div class="submit-seccion">
+                            <!-- Si es el inicio del juego o no se ha acabado el juego añado un botón para enviar apuesta -->
+                            <input class="submit" type="submit" 
+                                   value="Apuesta" name="envio_apuesta" /> 
+                        </div>
+                        <?php if (isset($fin) && !$fin): ?>
+                            <div class="info-seccion">
+                                <!-- Si no se ha acabado el juego añado una pista para el usuario -->
+                                <p>Intentos restantes: <?= MAX_INTENTOS - $numIntentos ?></p>
+                                <p><?= ($apuesta <=> $numOculto) > 0 ? 'Inténtalo con un número mas bajo' : 'Inténtalo con un número mas alto' ?></p>
+                                <p>Ya has jugado con los siguientes números: <?= implode(",", $numeros) ?></p>
+                            </div>
+                        <?php endif ?> 
+                    <?php endif ?>                 
                 </form> 
             </div>
         </div>  
