@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // Definición de constantes o parámetros de funcionamiento del juego
 define('MAX_INTENTOS', 5);
 define('LIM_INF', 1);
