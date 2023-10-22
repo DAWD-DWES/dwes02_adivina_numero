@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // Definición de constantes o parámetros de funcionamiento del juego
 define('MAX_INTENTOS', 5);
@@ -11,10 +10,10 @@ if (empty($_POST) || isset($_POST['nuevo_juego'])) { // Si se arranca el juego o
     $numOculto = mt_rand(LIM_INF, LIM_SUP); // Genero un valor aleatorio
     $numeros = []; // Array de números jugados
 } else { // Si estoy en mitad del juego leo los valores del formulario
-    $numOculto = filter_input(INPUT_POST, 'num_oculto', FILTER_SANITIZE_NUMBER_INT);
-    $numIntentos = filter_input(INPUT_POST, 'num_intentos', FILTER_SANITIZE_NUMBER_INT);
-    $apuesta = filter_input(INPUT_POST, 'apuesta', FILTER_SANITIZE_NUMBER_INT);
-    $numeros = filter_input(INPUT_POST, 'numeros', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+    $numOculto = $_POST['num_oculto'];
+    $numIntentos = $_POST['num_intentos'];
+    $apuesta = $_POST['apuesta'];
+    $numeros = $_POST['numeros'] ?? [];
     $numeros[] = $apuesta;
     ++$numIntentos;
     $fin = $numIntentos >= MAX_INTENTOS || $apuesta === $numOculto; // Establezco si se ha acabado la partida o no
