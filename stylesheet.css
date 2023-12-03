@@ -40,7 +40,8 @@ input[type="number"]{
 
 .submit {
     height: 30px;
-    background: orange
+    background: orange;
+    text-align: center;
 }
 
 .form-seccion {
