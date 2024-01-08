@@ -6,9 +6,8 @@ define('MAX_INTENTOS', 5);
 define('LIM_INF', 1);
 define('LIM_SUP', 20);
 
-if (filter_has_var(INPUT_POST, 'envio_apuesta')) { // SI se está enviando una apuesta
-    
-    $apuesta = filter_input(INPUT_POST, 'apuesta', FILTER_SANITIZE_NUMBER_INT);
+if (filter_has_var(INPUT_POST, 'envio_apuesta')) { // SI se está enviando una apuesta  
+    $apuesta = filter_input(INPUT_POST, 'apuesta', FILTER_VALIDATE_INT);
     $_SESSION['numeros'][] = $apuesta;
     $numeros=$_SESSION['numeros'];
     ++$_SESSION['num_intentos'];
