@@ -1,22 +1,24 @@
 <?php
 
+session_start();
 // Definición de constantes o parámetros de funcionamiento del juego
 define('MAX_INTENTOS', 5);
 define('LIM_INF', 1);
 define('LIM_SUP', 20);
 
-if (empty($_POST) || isset($_POST['nuevo_juego'])) { // Si se arranca el juego o se solicita una nueva partida
-    $numIntentos = 0;
-    $numOculto = mt_rand(LIM_INF, LIM_SUP); // Genero un valor aleatorio
-    $numeros = []; // Array de números jugados
-} else { // Si estoy en mitad del juego leo los valores del formulario
-    $numOculto = $_POST['num_oculto'];
-    $numIntentos = $_POST['num_intentos'];
-    $apuesta = $_POST['apuesta'];
-    $numeros = $_POST['numeros'] ?? [];
-    $numeros[] = $apuesta;
-    ++$numIntentos;
-    $fin = $numIntentos >= MAX_INTENTOS || $apuesta === $numOculto; // Establezco si se ha acabado la partida o no
+if (filter_has_var(INPUT_POST, 'envio_apuesta')) { // SI se está enviando una apuesta
+    
+    $apuesta = filter_input(INPUT_POST, 'apuesta', FILTER_SANITIZE_NUMBER_INT);
+    $_SESSION['numeros'][] = $apuesta;
+    $numeros=$_SESSION['numeros'];
+    ++$_SESSION['num_intentos'];
+    $numIntentos = $_SESSION['num_intentos'];
+    $numOculto = $_SESSION['num_oculto'];
+    $fin = $numIntentos >= MAX_INTENTOS || $apuesta === $numOculto; // Establezco si se ha acabado la partida o no// Si se arranca el juego o se solicita una nueva partida
+} else { // Si estoy al comienzo del juego o se solicita un nuevo juego
+    $_SESSION['num_intentos'] = $numIntentos = 0;
+    $_SESSION['num_oculto'] = $numOculto = mt_rand(LIM_INF, LIM_SUP); // Genero un valor aleatorio
+    $_SESSION['numeros'] = $numeros = []; // Array de números jugados
 }
 ?>
 
@@ -44,22 +46,23 @@ if (empty($_POST) || isset($_POST['nuevo_juego'])) { // Si se arranca el juego o
                         <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" 
                                max="<?= LIM_SUP ?>" value="<?= ($apuesta) ?? ''; ?>" <?= !empty($fin) ? 'readonly' : '' ?> />
                     </div>
-                    <?php if (isset($fin) && $fin): ?> <!-- Si no se ha acabado la partida incluyo la pista para el jugador -->
+                    <?php if (isset($fin) && $fin): ?> <!-- Si se ha acabado el juego -->
                         <div class="submit-seccion">
-                            <!-- Si se ha acabado el juego añado un botón para iniciar una nueva partida y un mensaje de fin de juego -->
-                            <input class="submit" type="submit" 
-                                   value="Nuevo Juego" name="nuevo_juego" /> 
+                            <!-- Añado un botón para iniciar una nueva partida y un mensaje de fin de juego -->
+                            <!-- <input class="submit" type="submit" value="Nuevo Juego" name="nuevo_juego" /> -->
+                            <!-- <input class="submit" type="submit" formmethod="GET" value="Nuevo Juego" name="nuevo_juego"> -->
+                             <a href="<?= "{$_SERVER['PHP_SELF']}?nuevo_juego" ?>"><input class="submit" value="Nuevo Juego"></a>
                         </div>
                         <p class="info-seccion"><?= ($apuesta === $numOculto) ? "Enhorabuena!!! Lo has acertado en {$numIntentos} " . (($numIntentos !== 1) ? "intentos" : "intento") : 'Lo sentimos!!' ?></p> 
-                    <?php else: ?>
+                    <?php else: ?> <!-- Si no se ha acabado el juego o es el inicio de un nuevo juego-->
                         <div class="submit-seccion">
-                            <!-- Si es el inicio del juego o no se ha acabado el juego añado un botón para enviar apuesta -->
+                            <!-- Añado un botón para enviar apuesta -->
                             <input class="submit" type="submit" 
                                    value="Apuesta" name="envio_apuesta" /> 
                         </div>
-                        <?php if (isset($fin) && !$fin): ?>
+                        <?php if (isset($fin) && !$fin): ?> <!-- Si no se ha acabado el juego -->
                             <div class="info-seccion">
-                                <!-- Si no se ha acabado el juego añado una pista para el usuario -->
+                                <!-- Añado una pista para el usuario -->
                                 <p>Intentos restantes: <?= MAX_INTENTOS - $numIntentos ?></p>
                                 <p><?= ($apuesta <=> $numOculto) > 0 ? 'Inténtalo con un número mas bajo' : 'Inténtalo con un número mas alto' ?></p>
                                 <p>Ya has jugado con los siguientes números: <?= implode(",", $numeros) ?></p>
