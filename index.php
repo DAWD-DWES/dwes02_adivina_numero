@@ -38,15 +38,10 @@ if (filter_has_var(INPUT_POST, 'envio_apuesta')) { // SI se está enviando una a
         <div class="page">
             <h1>¡Adivina el número oculto!</h1>
             <div class="border border-4 border-warning">
-                <form name="form_apuestanumero" action="index.php" method="POST">
-                    <input type="hidden" name="num_oculto" value="<?= $numOculto ?>" /> <!-- Incluyo el número secreto en el formulario para que no se pierda -->
-                    <input type="hidden" name="num_intentos" value="<?= $numIntentos ?>" /> <!-- Incluyo el número de intentos en el formulario para que no se pierda -->
-                    <?php foreach ($numeros as $numero): ?> <!-- Incluyo los valores de las apuestas ya introducidas -->
-                        <input type="hidden" name="numeros[]" value="<?= $numero ?>" />
-                    <?php endforeach ?>                 
+                <form name="form_apuestanumero" action="index.php" method="POST">               
                     <div class="input-seccion">
-                        <label for="apuesta"><?= 'Enter a numero (' . LIM_INF . '-' . LIM_SUP . '):' ?></label> 
-                        <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" 
+                        <label for="apuesta" class="form-label"><?= 'Enter a numero (' . LIM_INF . '-' . LIM_SUP . '):' ?></label> 
+                        <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" class="form-control"
                                max="<?= LIM_SUP ?>" value="<?= ($apuesta) ?? ''; ?>" <?= !empty($fin) ? 'readonly' : '' ?> />
                     </div>
                     <?php if (isset($fin) && $fin): ?> <!-- Si se ha acabado el juego -->
