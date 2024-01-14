@@ -16,7 +16,7 @@ if (isset($_SESSION['usuario'])) {
         $numIntentos = $_SESSION['num_intentos'];
         $numOculto = $_SESSION['num_oculto'];
         $fin = $numIntentos >= MAX_INTENTOS || $apuesta === $numOculto; // Establezco si se ha acabado la partida o no// Si se arranca el juego o se solicita una nueva partida
-    } else if (filter_has_var(INPUT_GET, 'nuevo_juego')) { // Si estoy al comienzo del juego o se solicita un nuevo juego
+    } else { // Si estoy al comienzo del juego o se solicita un nuevo juego
         $_SESSION['num_intentos'] = $numIntentos = 0;
         $_SESSION['num_oculto'] = $numOculto = mt_rand(LIM_INF, LIM_SUP); // Genero un valor aleatorio
         $_SESSION['numeros'] = $numeros = []; // Array de números jugados
@@ -41,27 +41,27 @@ if (isset($_SESSION['usuario'])) {
     </head>
     <body>
         <div class= "d-flex flex-column vh-100">
-            <nav class="navbar navbar-default d-flex flex-row">
+            <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+                <div>Adivina Número</div><div></div>
                 <div class="d-flex dropdown p-2">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" 
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <?= $usuario ?>
                     </button>
-                    <div class = "dropdown-menu" aria-labelledby = "dropdownMenuButton">
-                        <a class = "dropdown-item" href = "index.php?logout">Salir</a>
-                        <a class = "dropdown-item" href = "index.php?baja">Baja</a>
-                    </div>
+                    <ul class = "dropdown-menu" aria-labelledby = "dropdownMenuButton">
+                        <li><a class = "dropdown-item" href = "index.php?logout">Salir</a></li>
+                        <li><a class = "dropdown-item" href = "index.php?baja">Baja</a></li>
+                    </ul>
                 </div>
             </nav>
-            <div class = "d-flex flex-column" style = "flex: 1 1 auto">
+            <div class = "d-flex flex-column m-5" style = "flex: 1 1 auto">
                 <div class = "container-sm">
-                    <h1 class = "text-center">¡Adivina el número oculto!</h1>
+                    <h1 class = "text-center mb-4">¡Adivina el número oculto!</h1>
                     <div class = "border border-4 border-warning p-5">
                         <form name = "form_apuestanumero" action = "<?= "{$_SERVER['PHP_SELF']}" ?>" method = "POST">
                             <div class = "row">
                                 <div class = "col-md-6">
-                                    <label for = "apuesta" class = "fs-5 col-form-label col-6"><? = 'Enter a numero (' . LIM_INF . '-' . LIM_SUP . '):'
-                                        ?></label> 
+                                    <label for = "apuesta" class = "fs-5 col-form-label col-6"><?= 'Introduce un número (' . LIM_INF . '-' . LIM_SUP . '):' ?></label> 
                                 </div>
                                 <div class="col-md-6">
                                     <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" class="form-control w-25"

@@ -11,3 +11,4 @@ try {
 } catch (PDOException $e) {
     die("Error en la conexión a la base de datos: " . $e->getMessage());
 }
+return $bd;
