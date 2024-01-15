@@ -12,7 +12,7 @@ define("REGEXP_PASSWORD", "/^(?=.*\d).{4,8}$/");
 // Expresión regular para comprobación de Email
 define("REGEXP_EMAIL", "/^.+@[^\.].*\.[a-z]{2,}$/");
 
-function recuperaUsuarioPorNombrePassword(PDO $bd, string $nombre, string $password): ?Object {
+function recuperaUsuarioPorNombrePassword(PDO $bd, string $nombre, string $password): ?object {
     $consultaUsuario = 'select * from users where name=:name and password=:password';
     $stmtConsultaUsuario = $bd->prepare($consultaUsuario);
     $stmtConsultaUsuario->execute([":name" => $nombre, ":password" => $password]);
