@@ -12,8 +12,7 @@ if (isset($_SESSION['usuario'])) {
         $apuesta = filter_input(INPUT_POST, 'apuesta', FILTER_VALIDATE_INT);
         $_SESSION['numeros'][] = $apuesta;
         $numeros = $_SESSION['numeros'];
-        ++$_SESSION['num_intentos'];
-        $numIntentos = $_SESSION['num_intentos'];
+        $numIntentos = ++$_SESSION['num_intentos'];
         $numOculto = $_SESSION['num_oculto'];
         $fin = $numIntentos >= MAX_INTENTOS || $apuesta === $numOculto; // Establezco si se ha acabado la partida o no// Si se arranca el juego o se solicita una nueva partida
     } else { // Si estoy al comienzo del juego o se solicita un nuevo juego
