@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 // Definición de constantes o parámetros de funcionamiento del juego
 define('MAX_INTENTOS', 5);
@@ -9,7 +8,7 @@ define('LIM_SUP', 20);
 if (filter_has_var(INPUT_POST, 'envio_apuesta')) { // SI se está enviando una apuesta  
     $apuesta = filter_input(INPUT_POST, 'apuesta', FILTER_VALIDATE_INT);
     $_SESSION['numeros'][] = $apuesta;
-    $numeros=$_SESSION['numeros'];
+    $numeros = $_SESSION['numeros'];
     $numIntentos = ++$_SESSION['num_intentos'];
     $numOculto = $_SESSION['num_oculto'];
     $fin = $numIntentos >= MAX_INTENTOS || $apuesta === $numOculto; // Establezco si se ha acabado la partida o no// Si se arranca el juego o se solicita una nueva partida
@@ -23,7 +22,7 @@ if (filter_has_var(INPUT_POST, 'envio_apuesta')) { // SI se está enviando una a
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Guess Hidden Number!</title>
+        <title>Adivina número oculto!</title>
         <meta name="viewport" content="width=device-width">
         <meta charset="UTF-8">
         <link rel="stylesheet" href="stylesheet.css">
@@ -31,39 +30,37 @@ if (filter_has_var(INPUT_POST, 'envio_apuesta')) { // SI se está enviando una a
     <body>
         <div class="page">
             <h1>¡Adivina el número oculto!</h1>
-            <div class="capaform">
-                <form class="form" name="form_apuestanumero" 
-                      action="index.php" method="POST">         
-                    <div class="input-seccion">
-                        <label for="apuesta"><?= 'Enter a numero (' . LIM_INF . '-' . LIM_SUP . '):' ?></label> 
-                        <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" 
-                               max="<?= LIM_SUP ?>" value="<?= ($apuesta) ?? ''; ?>" <?= !empty($fin) ? 'readonly' : '' ?> />
+            <form class="form" name="form_apuestanumero" 
+                  action="index.php" method="POST">         
+                <div class="input-seccion">
+                    <label for="apuesta"><?= 'Introduce un número (' . LIM_INF . '-' . LIM_SUP . '):' ?></label> 
+                    <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" 
+                           max="<?= LIM_SUP ?>" value="<?= ($apuesta) ?? ''; ?>" <?= !empty($fin) ? 'readonly' : '' ?> />
+                </div>
+                <?php if (isset($fin) && $fin): ?> <!-- Si se ha acabado el juego -->
+                    <div class="submit-seccion">
+                        <!-- Añado un botón para iniciar una nueva partida y un mensaje de fin de juego -->
+                        <!-- <input class="submit" type="submit" value="Nuevo Juego" name="nuevo_juego" /> -->
+                        <!-- <input class="submit" type="submit" formmethod="GET" value="Nuevo Juego" name="nuevo_juego"> -->
+                        <a href="<?= "{$_SERVER['PHP_SELF']}?nuevo_juego" ?>"><input class="submit" value="Nuevo Juego"></a>
                     </div>
-                    <?php if (isset($fin) && $fin): ?> <!-- Si se ha acabado el juego -->
-                        <div class="submit-seccion">
-                            <!-- Añado un botón para iniciar una nueva partida y un mensaje de fin de juego -->
-                            <!-- <input class="submit" type="submit" value="Nuevo Juego" name="nuevo_juego" /> -->
-                            <!-- <input class="submit" type="submit" formmethod="GET" value="Nuevo Juego" name="nuevo_juego"> -->
-                             <a href="<?= "{$_SERVER['PHP_SELF']}?nuevo_juego" ?>"><input class="submit" value="Nuevo Juego"></a>
+                    <p class="info-seccion"><?= ($apuesta === $numOculto) ? "Enhorabuena!!! Lo has acertado en {$numIntentos} " . (($numIntentos !== 1) ? "intentos" : "intento") : 'Lo sentimos!!' ?></p> 
+                <?php else: ?> <!-- Si no se ha acabado el juego o es el inicio de un nuevo juego-->
+                    <div class="submit-seccion">
+                        <!-- Añado un botón para enviar apuesta -->
+                        <input class="submit" type="submit" 
+                               value="Apuesta" name="envio_apuesta" /> 
+                    </div>
+                    <?php if (isset($fin) && !$fin): ?> <!-- Si no se ha acabado el juego -->
+                        <div class="info-seccion">
+                            <!-- Añado una pista para el usuario -->
+                            <p>Intentos restantes: <?= MAX_INTENTOS - $numIntentos ?></p>
+                            <p><?= ($apuesta <=> $numOculto) > 0 ? 'Inténtalo con un número mas bajo' : 'Inténtalo con un número mas alto' ?></p>
+                            <p>Ya has jugado con los siguientes números: <?= implode(",", $numeros) ?></p>
                         </div>
-                        <p class="info-seccion"><?= ($apuesta === $numOculto) ? "Enhorabuena!!! Lo has acertado en {$numIntentos} " . (($numIntentos !== 1) ? "intentos" : "intento") : 'Lo sentimos!!' ?></p> 
-                    <?php else: ?> <!-- Si no se ha acabado el juego o es el inicio de un nuevo juego-->
-                        <div class="submit-seccion">
-                            <!-- Añado un botón para enviar apuesta -->
-                            <input class="submit" type="submit" 
-                                   value="Apuesta" name="envio_apuesta" /> 
-                        </div>
-                        <?php if (isset($fin) && !$fin): ?> <!-- Si no se ha acabado el juego -->
-                            <div class="info-seccion">
-                                <!-- Añado una pista para el usuario -->
-                                <p>Intentos restantes: <?= MAX_INTENTOS - $numIntentos ?></p>
-                                <p><?= ($apuesta <=> $numOculto) > 0 ? 'Inténtalo con un número mas bajo' : 'Inténtalo con un número mas alto' ?></p>
-                                <p>Ya has jugado con los siguientes números: <?= implode(",", $numeros) ?></p>
-                            </div>
-                        <?php endif ?> 
-                    <?php endif ?>                 
-                </form> 
-            </div>
-        </div>  
+                    <?php endif ?> 
+                <?php endif ?>                 
+            </form> 
+        </div>
     </body>
 </html>
