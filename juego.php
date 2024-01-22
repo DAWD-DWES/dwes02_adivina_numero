@@ -29,7 +29,7 @@ if (isset($_SESSION['usuario'])) {
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Guess Hidden Number!</title>
+        <title>¡Adivina número!</title>
         <meta name="viewport" content="width=device-width">
         <meta charset="UTF-8">
         <!-- css para usar Bootstrap -->
@@ -41,7 +41,7 @@ if (isset($_SESSION['usuario'])) {
     <body>
         <div class= "d-flex flex-column vh-100">
             <nav class="navbar navbar-light bg-light d-flex justify-content-around">
-                <div>Adivina Número</div><div></div>
+                <div class="fs-5">Adivina Número</div><div></div>
                 <div class="d-flex dropdown p-2">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" 
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -64,7 +64,7 @@ if (isset($_SESSION['usuario'])) {
                                 </div>
                                 <div class="col-md-6">
                                     <input id="apuesta" type="number"  required name="apuesta" min="<?= LIM_INF ?>" class="form-control w-25"
-                                           max="<?= LIM_SUP ?>" value="<?= ($apuesta) ?? ''; ?>" <?= !empty($fin) ? 'readonly' : '' ?> />
+                                           max="<?= LIM_SUP ?>" value="<?= ($apuesta) ?? '' ?>" <?= !empty($fin) ? 'readonly' : '' ?> />
                                 </div>
                             </div>
                             <?php if (isset($fin) && $fin): ?> <!-- Si se ha acabado el juego -->

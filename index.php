@@ -2,6 +2,7 @@
 session_start();
 
 $bd = require "conexion.php";
+require_once "funciones.php";
 
 // Expresión regular para comprobación de name
 // Cadena entre tres y 25 caracteres
@@ -12,50 +13,25 @@ define("REGEXP_PASSWORD", "/^(?=.*\d).{4,8}$/");
 // Expresión regular para comprobación de Email
 define("REGEXP_EMAIL", "/^.+@[^\.].*\.[a-z]{2,}$/");
 
-function recuperaUsuarioPorNombrePassword(PDO $bd, string $nombre, string $password): ?object {
-    $consultaUsuario = 'select * from users where name=:name and password=:password';
-    $stmtConsultaUsuario = $bd->prepare($consultaUsuario);
-    $stmtConsultaUsuario->execute([":name" => $nombre, ":password" => $password]);
-    $stmtConsultaUsuario->setFetchMode(PDO::FETCH_OBJ);
-    if ($stmtConsultaUsuario->rowCount()) {
-        $usuarioObject = $stmtConsultaUsuario->fetch();
-    }
-    return ($usuarioObject ?? null);
-}
-
-function borraUsuarioPorId(PDO $bd, string $usuarioId): bool {
-    $borraUsuario = "delete from users where id = :id";
-    $stmtBorraUsuario = $bd->prepare($borraUsuario);
-    $resultado = $stmtBorraUsuario->execute([":id" => $usuarioId]);
-    return ($resultado);
-}
-
-function insertaUsuario(PDO $bd, string $nombre, string $password, string $email = ""): bool {
-    $insertaUsuario = "insert into users (name, password, email) values (:name, :password, :email)";
-    $stmtInsertaUsuario = $bd->prepare($insertaUsuario);
-    $result = $stmtInsertaUsuario->execute([":name" => $nombre, ":password" => $password, ":email" => $email]);
-    return $result;
-}
-
-if (isset($_SESSION['usuario'])) {
+if (isset($_SESSION['usuario'])) { // Si el usuario ya se ha autenticado
 // Si es una petición de cierre de sesión
-    if (filter_has_var(INPUT_GET, 'logout')) {
+    if (filter_has_var(INPUT_GET, 'logout')) { // Si es una petición de logout
 // destruyo la sesión
         session_unset();
         session_destroy();
         setcookie(session_name(), '', 0, '/');
-    } elseif (filter_has_var(INPUT_GET, 'baja')) {
+    } elseif (filter_has_var(INPUT_GET, 'baja')) { // Si es una petición de baja
         $usuarioId = $_SESSION['usuario_id'];
         borraUsuarioPorId($bd, $usuarioId);
         session_unset();
         session_destroy();
         setcookie(session_name(), '', 0, '/');
-    } else {
+    } else { // En otro caso
         header('Location:juego.php');
         die();
     }
-} else {
-    if (filter_has_var(INPUT_POST, 'login')) {
+} else { // Si el usuario no se ha autenticado
+    if (filter_has_var(INPUT_POST, 'login')) { // Si es una petición de login
         $usuario = trim(filter_input(INPUT_POST, 'nombre', FILTER_UNSAFE_RAW));
         $password = trim(filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW));
         $usuarioObject = recuperaUsuarioPorNombrePassword($bd, $usuario, $password);
@@ -67,16 +43,16 @@ if (isset($_SESSION['usuario'])) {
         } else {
             $errorLogin = true;
         }
-    } elseif (filter_has_var(INPUT_POST, 'registro')) {
+    } elseif (filter_has_var(INPUT_POST, 'registro')) { // Si es una petición de registro
         $usuario = trim(filter_input(INPUT_POST, 'nombre', FILTER_UNSAFE_RAW));
-        $usuarioValido = $usuario && filter_var($usuario, FILTER_VALIDATE_REGEXP,
-                        ['options' => ['regexp' => REGEXP_NAME]]);
+        $usuarioValido = !(filter_var($usuario, FILTER_VALIDATE_REGEXP,
+                        ['options' => ['regexp' => REGEXP_NAME]]) === false);
         $password = trim(filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW));
-        $passwordValido = $password && filter_var($password, FILTER_VALIDATE_REGEXP,
-                        ['options' => ['regexp' => REGEXP_PASSWORD]]);
+        $passwordValido = !(filter_var($password, FILTER_VALIDATE_REGEXP,
+                        ['options' => ['regexp' => REGEXP_PASSWORD]]) === false);
         $email = trim(filter_input(INPUT_POST, 'email', FILTER_UNSAFE_RAW));
-        $emailValido = empty($email) || filter_var($email, FILTER_VALIDATE_REGEXP,
-                        ['options' => ['regexp' => REGEXP_EMAIL]]);
+        $emailValido = empty($email) || !(filter_var($email, FILTER_VALIDATE_REGEXP,
+                        ['options' => ['regexp' => REGEXP_EMAIL]]) === false);
         if ($usuarioValido === false || $passwordValido === false || $emailValido === false) {
             $errorRegistro = true;
         } else {
@@ -88,7 +64,7 @@ if (isset($_SESSION['usuario'])) {
                 die();
             }
         }
-    } elseif (filter_has_var(INPUT_GET, 'pet_registro')) {
+    } elseif (filter_has_var(INPUT_GET, 'pet_registro')) { // Si es una petición de formulario de registro
         $petRegistro = true;
     }
 }
